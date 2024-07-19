@@ -4,7 +4,7 @@ import os
 
 
 def generate_text_to_speech(input: str) -> None:
-    # Initialize OpenAI client
+
     client = OpenAI()
 
     try:
@@ -18,8 +18,8 @@ def generate_text_to_speech(input: str) -> None:
         play_audio("output.mp3")
 
     except Exception as e:
-        print(f"Error occurred: {e}")
-        # Handle error or log it as per your application's requirements
+        print("An error has occurred: {0}".format(e))
+
 
 def play_audio(file_path: str) -> None:
     playsound.playsound(file_path)

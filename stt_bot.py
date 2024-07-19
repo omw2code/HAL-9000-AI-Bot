@@ -21,9 +21,8 @@ def record_text():
                     model="whisper-1",
                     file=audio_file
                 )
-
-                print(transcription.text)
-
+                output_text(transcription.text)
+                return
         except sr.RequestError as e:
             print("Requests not made: {0}".format(e))
 
@@ -33,26 +32,42 @@ def record_text():
     return
 
 
-def save_audio(audio):
-    with open('speech.wav', 'wb') as file:
-        file.write(audio.get_wav_data())
+def save_audio(audio) -> None:
+    try:
+        with open('speech.wav', 'wb') as file:
+            file.write(audio.get_wav_data())
+    except Exception as e:
+        print("An error has occurred: {0}".format(e))
+
+    return
 
 def read_audio(path):
     try:
         return open("speech.wav", "rb")
-    except:
-        print("audio file couldn't be opened")
+    except Exception as e:
+        print("An error has occurred: {0}".format(e))
 
-def output_text(text) -> None:
-    file = open("output.txt", "a")
-    file.write(text)
-    file.write("\n")
-    file.close()
     return
 
 
-while(1):
-    text = record_text()
-    output_text(text)
+def output_text(text) -> None:
+    try:
+        file = open("speech_output.txt", "a")
+        try:
+            file.write(text)
+        except Exception as e:
+            print("An error has occurred: {0}".format(e))
 
-    print("Wrote text")
+        finally:
+            file.close()
+    except Exception as e:
+        print("An error has occurred: {0}".format(e))
+
+    return
+
+
+# while(1):
+#     text = record_text()
+#     output_text(text)
+
+#     print("Wrote text")
