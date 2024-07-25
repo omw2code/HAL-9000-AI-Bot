@@ -70,21 +70,12 @@ class AudioStream(object):
 
 
 
-audio_stream = AudioStream("../output.mp3")
+# audio_stream = AudioStream("../output.mp3")
 
-audio_thread = threading.Thread(target=audio_stream.play_audio)
+# audio_thread = threading.Thread(target=audio_stream.play_audio)
 
-audio_thread.start()
+# audio_thread.start()
 
-time.sleep(0.1)
+# time.sleep(0.1)
 
-audio_stream.animate()
-
-
-
-
-
-
-
-
-
+# audio_stream.animate()

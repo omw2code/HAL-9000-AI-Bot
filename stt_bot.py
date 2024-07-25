@@ -1,28 +1,32 @@
 import speech_recognition as sr
-from openai import OpenAI
+from openai import OpenAI, APIError
 
 class SST():
     def __init__(self):
-
-        self._r = sr.Recognizer()
+        self._rec = sr.Recognizer()
+        self._mic = sr.Microphone()
         self._client = OpenAI()
+        
 
     def record_text(self):
         while(1):
             try:
-                with sr.Microphone() as source:
+                with self._mic  as source:
                     print("entered")
-                    self._r.adjust_for_ambient_noise(source, duration=0.2)
+                    self._rec.adjust_for_ambient_noise(source, duration=0.2)
 
-                    audio = self._r.listen(source)
+                    audio = self._rec.listen(source)
                     self.save_audio(audio)
                     
                     audio_file = self.read_audio()
-
-                    transcription = self._client.audio.transcriptions.create(
-                        model="whisper-1",
-                        file=audio_file
-                    )
+                    try:
+                        transcription = self._client.audio.transcriptions.create(
+                            model="whisper-1",
+                            file=audio_file
+                        )
+                    except APIError as e:
+                        print("An error has occurred: {0}".format(e))
+                        
                     self.output_text(transcription.text)
                     return transcription.text
             except sr.RequestError as e:
@@ -34,7 +38,7 @@ class SST():
         return
 
 
-    def save_audio(audio) -> None:
+    def save_audio(self, audio) -> None:
         try:
             with open('speech.wav', 'wb') as file:
                 file.write(audio.get_wav_data())
@@ -43,7 +47,7 @@ class SST():
 
         return
 
-    def read_audio():
+    def read_audio(self):
         try:
             return open("speech.wav", "rb")
         except Exception as e:
@@ -52,7 +56,7 @@ class SST():
         return
 
 
-    def output_text(text) -> None:
+    def output_text(self, text) -> None:
         try:
             file = open("speech_output.txt", "a")
             try:

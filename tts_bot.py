@@ -1,15 +1,14 @@
-from openai import OpenAI
+from openai import OpenAI, APIError
 import playsound
 import os
 
 class TTS():
     def __init__(self):
-        pass
+        self._client = OpenAI()
 
-    def generate_text_to_speech(input: str) -> None:
-        client = OpenAI()
+    def generate_text_to_speech(self, input: str) -> None:
         try:
-            response = client.audio.speech.create(
+            response = self._client.audio.speech.create(
                 model="tts-1",
                 voice="onyx",
                 input=input
@@ -17,7 +16,7 @@ class TTS():
             
             response.stream_to_file("output.mp3")
 
-        except Exception as e:
+        except APIError as e:
             print("An error has occurred: {0}".format(e))
 
 
