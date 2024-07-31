@@ -1,47 +1,59 @@
-
-from pyqtgraph.Qt import QtGui, QtCore
+from pyqtgraph.Qt import QtCore
+from PyQt5.QtWidgets import QWidget, QTextEdit, QVBoxLayout
+from PyQt5.QtCore import QThread, QObject, pyqtSignal, QSize
 import pyqtgraph as pg
 from pydub import AudioSegment
 from pydub.playback import play
 import numpy as np
-import threading
 import time
 
+class AudioThread(QObject):
+    finished = pyqtSignal()
 
+    def __init__(self) -> None:
+        super().__init__()
+    
+    def play_audio(self):
+        self.audio_segment = AudioSegment.from_mp3("GUI/output.mp3")
+        play(self.audio_segment)
+        self.finished.emit()
 
-class AudioStream(object):
-    def __init__(self, file_path):
+class AudioVisualWidget(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.init_ui()
+
+    def init_ui(self):
         self.app = pg.mkQApp()
-
-        self.traces = dict()
-
-        self.phase = 0
-        self.t = np.arange(0, 3.0, 0.01)
-
         self.plot_widget = pg.PlotWidget()
+        self.plot_widget.resize(800, 480)
 
-        self.plot_widget.resize(1000, 600)
+        self.logger = QTextEdit()
+        self.logger.isReadOnly = True
+        self.logger.setFixedSize(QSize(800, 80))
+        
+        self.layout = QVBoxLayout()
 
-        self.plot_widget.show()
+        self.layout.addWidget(self.plot_widget)
+        self.layout.addWidget(self.logger)
+        self.setLayout(self.layout)
 
-        self.audio_segment = AudioSegment.from_mp3(file_path)
+        # self.plot_widget.show()
+        self.timer = QtCore.QTimer()
+        self.tet = QThread()
+
+    def config(self):
+        self.plot_widget.clear()
+        self.traces = dict()
+        self.audio_position = 0
+        self.CHUNK = 1024
+        self.x = np.arange(0, 2 * self.CHUNK, 2)
+        self.audio_segment = AudioSegment.from_mp3("GUI/output.mp3")
         self.sample_rate = self.audio_segment.frame_rate
         self.num_channels = self.audio_segment.channels
         self.sample_width = self.audio_segment.sample_width
         self.audio_data = np.array(self.audio_segment.get_array_of_samples())
 
-        self.CHUNK = 1024
-        self.x = np.arange(0, 2 * self.CHUNK, 2)
-        self.f = np.linspace(0, self.sample_rate / 2, self.CHUNK // 2)
-
-        self.audio_position = 0
-
-    def play_audio(self):
-        play(self.audio_segment)
-
-    def start(self):
-        self.app.exec()
-    
     def draw(self, name, dataset_x, dataset_y):
         if name in self.traces:
             self.traces[name].setData(dataset_x, dataset_y)
@@ -54,28 +66,39 @@ class AudioStream(object):
         if self.audio_position + self.CHUNK * self.num_channels < len(self.audio_data):
             wf_data = self.audio_data[self.audio_position:self.audio_position + self.CHUNK * self.num_channels]
             self.audio_position += self.CHUNK * self.num_channels
-
+            #num channels may not be the expected number im thinking
             if self.num_channels > 1:
                 wf_data = wf_data.reshape((-1, self.num_channels)).mean(axis=1)
 
             wf_data = (wf_data / (2 ** (8 * self.sample_width - 1))) * 255.0 + 128
             self.draw("HAL", dataset_x=self.x, dataset_y=wf_data)
+        else:
+            if self.timer.isActive():
+                print("Stopping timer")
+                self.timer.stop()
 
     def animate(self):
-        timer = QtCore.QTimer()
-        timer.timeout.connect(self.update)
-        #timer.start(50)
-        timer.start(int(1000 * self.CHUNK / self.sample_rate))  
-        self.start()
+        #TODO: look at the logic of this and maybe change it to improve the latency
+        self.stop()
+        self.config()
+        #this timer aint working right
+        self.timer = QtCore.QTimer()
+        self.tet = QThread()
 
+        worker = AudioThread()
+        worker.moveToThread(self.tet)
+        worker.finished.connect(self.tet.quit)
+        self.tet.started.connect(worker.play_audio)
+        self.tet.start()
 
+        time.sleep(0.1)
+        #TODO: Check timers timeout
+        self.timer.timeout.connect(self.update)
+        self.timer.start(int(1000 * self.CHUNK / self.sample_rate))
 
-# audio_stream = AudioStream("../output.mp3")
-
-# audio_thread = threading.Thread(target=audio_stream.play_audio)
-
-# audio_thread.start()
-
-# time.sleep(0.1)
-
-# audio_stream.animate()
+    def stop(self):
+        if self.timer.isActive():
+            self.timer.stop()
+        if self.tet.isRunning():
+            self.tet.quit()
+            self.tet.wait()

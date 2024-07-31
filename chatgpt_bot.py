@@ -19,7 +19,7 @@ class GPT():
                 completion = self.client.chat.completions.create(
                     messages=input_message,
                     model="gpt-3.5-turbo",
-                    max_tokens=50,
+                    max_tokens=25,
                     n=1
                 )
                 response = completion.choices[0].message.content
@@ -32,35 +32,21 @@ class GPT():
                 print("An error has occurred: {0}".format(e))
 
 
-
-
-    #TODO: refactor for genericity in an IO interface
-    def read_input() -> str:
+    def read_input(self) -> str:
         try:
             with open("speech_output.txt", "r") as file:
-                text = file.readlines()
-                file.close()
+                text = file.read()
+
             if not text:
                 raise ValueError("File is empty")
-            try:
-                with open("speech_output.txt", "w") as file:
-                    file.truncate(0)
-                    file.close()
-            except Exception as e:
-                print("An error has occurred: {0}".format(e))
-            finally:
-                return text[0]
+            
+            with open("speech_output.txt", "w") as file:
+                file.truncate(0)
+            
+            return text.strip()
+        except FileNotFoundError:
+            print("The file 'speech_output.txt' was not found.")
+        except ValueError as ve:
+            print(f"An error has occurred: {ve}")
         except Exception as e:
-                print("An error has occurred: {0}".format(e))
-
-
-    #Save only the revelant information for chat to remember the conversation
-    def save_conversation(text: str) -> None:
-        #find only the relevant information 
-        pass
-        
-
-
-    #Extract only the relevant information from the previous query
-    def get_converation_context() -> str:
-        pass
+            print(f"An unexpected error has occurred: {e}")

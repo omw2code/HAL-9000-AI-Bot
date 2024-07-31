@@ -1,11 +1,12 @@
 import speech_recognition as sr
 from openai import OpenAI, APIError
-
+from collections import deque
 class SST():
     def __init__(self):
         self._rec = sr.Recognizer()
         self._mic = sr.Microphone()
         self._client = OpenAI()
+        self.historyDeque = deque(maxlen=3)
         
 
     def record_text(self):
@@ -26,8 +27,10 @@ class SST():
                         )
                     except APIError as e:
                         print("An error has occurred: {0}".format(e))
-                        
+                    print("outputting text")
+
                     self.output_text(transcription.text)
+
                     return transcription.text
             except sr.RequestError as e:
                 print("Requests not made: {0}".format(e))
@@ -58,15 +61,12 @@ class SST():
 
     def output_text(self, text) -> None:
         try:
-            file = open("speech_output.txt", "a")
-            try:
-                file.write(text)
-            except Exception as e:
-                print("An error has occurred: {0}".format(e))
-
-            finally:
-                file.close()
+            with open("speech_output.txt", "w") as file:
+                file.write(f"New User input: {text}\n")
+                file.write("Previous Conversation Context:\n")
+                for i, text in enumerate(self.historyDeque):
+                    file.write(f"{i + 1}: {text}\n")
         except Exception as e:
             print("An error has occurred: {0}".format(e))
-
+        self.historyDeque.appendleft(text)
         return

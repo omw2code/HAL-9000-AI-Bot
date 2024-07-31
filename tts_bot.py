@@ -1,5 +1,5 @@
 from openai import OpenAI, APIError
-import playsound
+from pydub import AudioSegment
 import os
 
 class TTS():
@@ -14,12 +14,14 @@ class TTS():
                 input=input
             )
             
-            response.stream_to_file("output.mp3")
+            response.stream_to_file("GUI/output.mp3")
 
         except APIError as e:
             print("An error has occurred: {0}".format(e))
 
-
-    # def play_audio(file_path: str) -> None:
-    #     playsound.playsound(file_path)
-    #     os.remove(file_path)
+    def get_audio_len(self):
+        try:
+            audio_file = AudioSegment.from_file("GUI/output.mp3")
+            return audio_file.duration_seconds
+        except FileNotFoundError as e:
+            print("An error has occurred: {0}".format(e))
