@@ -1,11 +1,12 @@
-from pyqtgraph.Qt import QtCore
-from PyQt5.QtWidgets import QWidget, QTextEdit, QVBoxLayout
+from pyqtgraph.Qt import QtCore, QtGui
+from PyQt5.QtWidgets import QWidget, QTextEdit, QVBoxLayout, QHBoxLayout,QPushButton
 from PyQt5.QtCore import QThread, QObject, pyqtSignal, QSize
 import pyqtgraph as pg
 from pydub import AudioSegment
 from pydub.playback import play
 import numpy as np
-import time
+import time, datetime
+import os
 
 class AudioThread(QObject):
     finished = pyqtSignal()
@@ -18,10 +19,12 @@ class AudioThread(QObject):
         play(self.audio_segment)
         self.finished.emit()
 
-class AudioVisualWidget(QWidget):
+#TODO: CLEAN UP CODE AND MOVE WIDGETS TO INDIVIDUAL FILES //////////////////////
+class GUI(QWidget):
     def __init__(self):
         super().__init__()
         self.init_ui()
+        self.start_dialog()
 
     def init_ui(self):
         self.app = pg.mkQApp()
@@ -32,15 +35,83 @@ class AudioVisualWidget(QWidget):
         self.logger.isReadOnly = True
         self.logger.setFixedSize(QSize(800, 80))
         
-        self.layout = QVBoxLayout()
+        self.vlayout = QVBoxLayout()
 
-        self.layout.addWidget(self.plot_widget)
-        self.layout.addWidget(self.logger)
-        self.setLayout(self.layout)
+        self.vlayout.addWidget(self.plot_widget)
+        self.vlayout.addWidget(self.logger)
+        # self.setLayout(self.vlayout)
+
+        #Button style config
+        self.halButton = QPushButton('Disable H.A.L.')
+        self.dialogButton = QPushButton('Show Dialog')
+        self.loggerButton = QPushButton('Show Logger')
+        font = QtGui.QFont('Courier New', 20)
+        self.halButton.setFont(font)
+        self.dialogButton.setFont(font)
+        self.loggerButton.setFont(font)
+        self.loggerButton.setDisabled(True)
+        self.halButton.setFixedSize(QSize(200, 150))
+        self.dialogButton.setFixedSize(QSize(200, 150))
+        self.loggerButton.setFixedSize(QSize(200, 150))
+
+        #Button clicked set up
+        self.dialogButton.clicked.connect(self.start_dialog)
+        self.loggerButton.clicked.connect(self.start_logging)
+
+        #GUI layout set up
+        self.vlayout2 = QVBoxLayout()
+        self.vlayout2.addWidget(self.halButton)
+        self.vlayout2.addWidget(self.dialogButton)
+        self.vlayout2.addWidget(self.loggerButton)
+
+        self.hlayout = QHBoxLayout()
+        self.hlayout.addLayout(self.vlayout)
+        self.hlayout.addLayout(self.vlayout2)
+        self.setLayout(self.hlayout)
 
         # self.plot_widget.show()
         self.timer = QtCore.QTimer()
         self.tet = QThread()
+    
+    def start_dialog(self):
+        self.dialogButton.setDisabled(True)
+        self.loggerButton.setDisabled(False)
+
+        #if the signal was emitted from the logger button, stop this
+        #if there is text, display it
+
+        with open('speech_output.txt', 'r') as file:
+            text = file.readlines()
+            
+
+    
+    def start_logging(self):
+        self.loggerButton.setDisabled(True)
+        self.dialogButton.setDisabled(False)
+        
+        #log 3 different things: current OS status, current temperature status, current 
+        self.log_timer = QtCore.QTimer()
+        self.log_timer.timeout.connect(self.log_message)
+        self.log_timer.start(2000)
+        
+    
+    def log_message(self) -> None:
+            # self.logger.moveCursor(self.logger.verticalScrollBar().maximum())
+            # self.logger.setTextColor(QtGui.QColor(255, 51, 0))
+            # self.logger.setPlainText(message)
+
+            # # Scroll to the bottom to show the latest messages
+            # self.logger.verticalScrollBar().setValue(self.logger.verticalScrollBar().maximum())
+        self.text_phrase = list(f"{datetime.datetime.now()} | Status: OK | Log message tests.\n")
+        self.insert_phrase_char()
+        self.logger.verticalScrollBar().setValue(self.logger.verticalScrollBar().maximum())
+
+    def insert_phrase_char(self):
+        if len(self.text_phrase) > 0:
+            cursor = self.logger.textCursor()
+            next_char = self.text_phrase.pop(0)
+            cursor.insertText(next_char)
+            QtCore.QTimer.singleShot(10, self.insert_phrase_char)
 
     def config(self):
         self.plot_widget.clear()

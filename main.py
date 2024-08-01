@@ -53,7 +53,7 @@ class ModelsThread(QObject):
 
 def main() -> None:
     app = QApplication([])
-    gui = av.AudioVisualWidget()
+    gui = av.GUI()
     worker = ModelsThread()
     thread = QThread()
     worker.moveToThread(thread)
