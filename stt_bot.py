@@ -61,8 +61,9 @@ class SST():
 
     def output_text(self, text) -> None:
         try:
+            
             with open("speech_output.txt", "w") as file:
-                file.write(f"New User input: {text}\n")
+                file.write(f"User: {text}\n")
                 file.write("Previous Conversation Context:\n")
                 for i, text in enumerate(self.historyDeque):
                     file.write(f"{i + 1}: {text}\n")

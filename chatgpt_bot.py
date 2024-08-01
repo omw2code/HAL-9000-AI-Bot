@@ -45,7 +45,7 @@ class GPT():
             
             return text.strip()
         except FileNotFoundError:
-            print("The file 'speech_output.txt' was not found.")
+            print("The file was not found.")
         except ValueError as ve:
             print(f"An error has occurred: {ve}")
         except Exception as e:
