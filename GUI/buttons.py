@@ -2,6 +2,7 @@ from pyqtgraph.Qt import QtCore, QtGui
 from PyQt5.QtWidgets import QPushButton
 
 class ButtonWidget(QPushButton):
+    enableHal = QtCore.pyqtSignal(str)
     def __init__(self, name):
         super().__init__()
         self.init_ui()
@@ -22,3 +23,10 @@ class ButtonWidget(QPushButton):
             self.setStyleSheet("Background-color: green")
             self.setText("Enable H.A.L")
             self.setRed = True
+    
+    def enable_or_disable(self):
+        if self.isEnabled():
+            self.setEnabled(False)
+        else:
+            self.setEnabled(True)
+

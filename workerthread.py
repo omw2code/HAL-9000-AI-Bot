@@ -17,8 +17,10 @@ class WorkerThread(QObject):
         self.tts = tts_bot.TTS()
         self.stt = stt_bot.SST()
         self.log_conversation = True
+        self.enable_HAL = True
 
     def run(self):
+
         #send the initial message upon startup to the user
         self.tts.generate_text_to_speech(startup_message)
         mp3_len = self.tts.get_audio_len()
@@ -30,16 +32,18 @@ class WorkerThread(QObject):
         self.visual_available.emit("animate")
         time.sleep(mp3_len)
 
+
         while True:
-            input = self.gpt.read_input()
-            
-            if input:
-                if(self.log_conversation):
-                    self.log_user_input.emit("log input")
-                self.send_message(input)
-            else:
-                print("asking user")
-                self.stt.record_text()
+            if(self.enable_HAL):
+                input = self.gpt.read_input()
+                
+                if input:
+                    if(self.log_conversation):
+                        self.log_user_input.emit("log input")
+                    self.send_message(input)
+                else:
+                    print("asking user")
+                    self.stt.record_text()
         
     def send_message(self, input):
         print("sending to hal")
@@ -52,6 +56,12 @@ class WorkerThread(QObject):
             self.log_hal_output.emit('log output')
         self.visual_available.emit("animate")
         time.sleep(mp3_len)
+    
+    def enable_or_disable_HAL(self):
+        if(self.enable_HAL):
+            self.enable_HAL = False
+        else:
+            self.enable_HAL = True
     
     def start_logging_convo(self):
         if(self.log_conversation):

@@ -1,7 +1,6 @@
 from openai import OpenAI, APIError
 import os
 
-
 class GPT():
     def __init__(self):
         self.client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
@@ -40,8 +39,8 @@ class GPT():
             if not text:
                 raise ValueError("File is empty")
             
-            with open("speech_output.txt", "w") as file:
-                file.truncate(0)
+            # with open("speech_output.txt", "w") as file:
+            #     file.truncate(0)
             
             return text.strip()
         except FileNotFoundError:

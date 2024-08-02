@@ -22,9 +22,24 @@ class GUI(QWidget):
         self.dialogButton = but.ButtonWidget('Show Dialog')
         self.loggerButton = but.ButtonWidget('Show Logger')
 
-        #Button clicked set up
+        self.halButton.setStyleSheet('Background-color: Red')
+        self.dialogButton.setEnabled(False)
+
+        #if the dialog button is clicked, enable the loggerButton
+        self.dialogButton.clicked.connect(self.dialogButton.enable_or_disable)
+        self.dialogButton.clicked.connect(self.loggerButton.enable_or_disable)
         self.dialogButton.clicked.connect(self.logger.clear)
+        self.dialogButton.clicked.connect(self.logger.setLogStatus)
+
+
+        #if the logger button is clicked, enable the dialog button
+        self.loggerButton.clicked.connect(self.loggerButton.enable_or_disable)
+        self.loggerButton.clicked.connect(self.dialogButton.enable_or_disable)
+        self.loggerButton.clicked.connect(self.logger.clear)
+        self.loggerButton.clicked.connect(self.logger.setLogStatus)
         self.loggerButton.clicked.connect(self.logger.start_logging)
+
+
         self.halButton.clicked.connect(self.halButton.halClicked)
 
 

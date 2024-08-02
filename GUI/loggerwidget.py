@@ -6,6 +6,8 @@ class LoggerWidget(QTextEdit):
     def __init__(self):
         super().__init__()
         self.init_ui()
+        self.logDialog = True
+        self.logMetrics = False
 
         #log messages
         self.color_counter = 0
@@ -28,27 +30,39 @@ class LoggerWidget(QTextEdit):
         self.setFixedSize(QtCore.QSize(800, 80))
     
     def output_hal_response(self):
-        with open('GUI/hal_output.txt', 'r') as file:
-            line = file.readlines()
-            text = line[0]
-            self.setTextColor(QtGui.QColor(255, 0, 0))
-            self.insert_phrase_char(list(text))
-            self.verticalScrollBar().setValue(self.verticalScrollBar().maximum())
+        print(f"output_user_input:::::  Dialog log is {self.logDialog}")
+        print(f"output_user_input::::: Metrics log is {self.logMetrics}")
+        if(self.logDialog):
+            with open('GUI/hal_output.txt', 'r') as file:
+                text = 'HAL: '
+                text += file.read()
+                text += '\n'
+                self.setTextColor(QtGui.QColor(255, 0, 0))
+                self.insert_phrase_char(list(text))
+                self.verticalScrollBar().setValue(self.verticalScrollBar().maximum())
         
     def output_user_input(self):
-        with open('speech_output.txt', 'r') as file:
-            line = file.readlines()
-            text = line[0]
-            
+        if(self.logDialog):
+            with open('speech_output.txt', 'r') as file:
+                line = file.readlines()
+                text = ''.join(['User: ', line[0]])
+                text.removeprefix("New User Input to answer:")
+    
+            with open("speech_output.txt", "w") as file:
+                file.truncate(0)
+            self.setTextColor(QtGui.QColor(255, 255, 255))
             self.insert_phrase_char(list(text))
             self.verticalScrollBar().setValue(self.verticalScrollBar().maximum())
             
 
     def start_logging(self):
-        #log 3 different things: current OS status, current temperature status, current 
-        self.log_timer = QtCore.QTimer()
-        self.log_timer.timeout.connect(self.log_message)
-        self.log_timer.start(3000)
+        print(f"start_logging:::::  Dialog log is {self.logDialog}")
+        print(f"start_logging::::: Metrics log is {self.logMetrics}")
+        if(self.logMetrics):
+            #log 3 different things: current OS status, current temperature status, current 
+            self.log_timer = QtCore.QTimer()
+            self.log_timer.timeout.connect(self.log_message)
+            self.log_timer.start(3000)
         
     
     def log_message(self) -> None:
@@ -67,3 +81,16 @@ class LoggerWidget(QTextEdit):
             next_char = text.pop(0)
             cursor.insertText(next_char)
             QtCore.QTimer.singleShot(10, partial(self.insert_phrase_char, text))
+    
+    def setLogStatus(self):
+        if(self.logDialog):
+            self.logDialog = False
+            self.logMetrics = True
+            print(f"Dialog log is {self.logDialog}")
+            print(f"Metrics log is {self.logMetrics}")
+        else:
+            self.logDialog = True
+            self.logMetrics = False
+            print(f"Dialog log is {self.logDialog}")
+            print(f"Metrics log is {self.logMetrics}")
+            self.log_timer.stop()
