@@ -12,7 +12,9 @@ class Graph(pyqtgraph.PlotWidget):
         self.init_ui()
 
     def init_ui(self):
-        self.resize(800, 480)
+        # self.resize(800, 480)
+        # self.resize(600, 300)
+        self.setFixedSize(QtCore.QSize(600,300))
         self.timer = QtCore.QTimer()
         self.tet = QThread()
 

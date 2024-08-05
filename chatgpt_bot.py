@@ -1,6 +1,8 @@
 from openai import OpenAI, APIError
 import os
 
+
+
 class GPT():
     def __init__(self):
         self.client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))

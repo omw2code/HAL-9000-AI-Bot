@@ -27,8 +27,8 @@ class LoggerWidget(QTextEdit):
 
     def init_ui(self):
         self.isReadOnly = True
-        self.setFixedSize(QtCore.QSize(800, 80))
-    
+        self.setFixedSize(QtCore.QSize(600, 60))
+        # self.resize(600,60)    
     def output_hal_response(self):
         print(f"output_user_input:::::  Dialog log is {self.logDialog}")
         print(f"output_user_input::::: Metrics log is {self.logMetrics}")

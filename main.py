@@ -1,14 +1,24 @@
 import GUI.audio_visualizer as av
 import workerthread as wt
 
+import chatgpt_bot
+import tts_bot
+import stt_bot
+
 from PyQt5.QtCore import QThread
 from PyQt5.QtWidgets import QApplication
 import sys
+import qdarkstyle
 
 def main() -> None:
+    gpt = chatgpt_bot.GPT()
+    tts = tts_bot.TTS()
+    stt = stt_bot.SST()
+
     app = QApplication([])
+    app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
     gui = av.GUI()
-    worker = wt.WorkerThread()
+    worker = wt.WorkerThread(gpt,tts,stt)
     thread = QThread()
     worker.moveToThread(thread)
 

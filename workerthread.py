@@ -2,20 +2,23 @@ import chatgpt_bot
 import tts_bot
 import stt_bot
 import time
-from PyQt5.QtCore import pyqtSignal, QObject
+from PyQt5.QtCore import pyqtSignal, QObject, QThread
 
 startup_message= "The 9000 series is the most reliable computer ever made. No 9000 computer has ever made a mistake or distorted information. We are all, by any practical definition of the words, foolproof and incapable of error.\n"
 
-class WorkerThread(QObject):
+class WorkerThread(QThread):
     log_hal_output = pyqtSignal(str)
     log_user_input = pyqtSignal(str)
     visual_available = pyqtSignal(str)
 
-    def __init__(self):
+    def __init__(self, gpt, tts, stt):
         super().__init__()
-        self.gpt = chatgpt_bot.GPT()
-        self.tts = tts_bot.TTS()
-        self.stt = stt_bot.SST()
+        # self.gpt = chatgpt_bot.GPT()
+        # self.tts = tts_bot.TTS()
+        # self.stt = stt_bot.SST()
+        self.gpt = gpt
+        self.tts = tts
+        self.stt = stt
         self.log_conversation = True
         self.enable_HAL = True
 
@@ -35,7 +38,8 @@ class WorkerThread(QObject):
 
         while True:
             if(self.enable_HAL):
-                input = self.gpt.read_input()
+                # input = self.gpt.read_input()
+                input = None
                 
                 if input:
                     if(self.log_conversation):

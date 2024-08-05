@@ -9,9 +9,10 @@ class ButtonWidget(QPushButton):
         self.setText(name)
 
     def init_ui(self):
-        font = QtGui.QFont('Courier New', 20)
+        font = QtGui.QFont('Courier New', 8)
         self.setFont(font)
-        self.setFixedSize(QtCore.QSize(200, 150))
+        self.setFixedSize(QtCore.QSize(100, 80))
+        # self.resize(100, 80)
         self.setRed = False
 
     def halClicked(self):

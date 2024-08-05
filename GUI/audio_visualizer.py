@@ -1,4 +1,6 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
+from pyqtgraph.Qt import QtCore
+from PyQt5.QtCore import Qt
 
 import GUI.loggerwidget as lw
 import GUI.buttons as but
@@ -42,6 +44,8 @@ class GUI(QWidget):
 
         self.halButton.clicked.connect(self.halButton.halClicked)
 
+
+        
 
         #GUI layout set up
         self.vlayout2 = QVBoxLayout()
