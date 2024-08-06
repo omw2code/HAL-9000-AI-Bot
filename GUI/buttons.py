@@ -3,16 +3,16 @@ from PyQt5.QtWidgets import QPushButton
 
 class ButtonWidget(QPushButton):
     enableHal = QtCore.pyqtSignal(str)
+    deactivate = QtCore.pyqtSignal(str)
     def __init__(self, name):
         super().__init__()
         self.init_ui()
         self.setText(name)
 
     def init_ui(self):
-        font = QtGui.QFont('Courier New', 8)
+        font = QtGui.QFont('Courier New', 10)
         self.setFont(font)
         self.setFixedSize(QtCore.QSize(100, 80))
-        # self.resize(100, 80)
         self.setRed = False
 
     def halClicked(self):
@@ -25,9 +25,12 @@ class ButtonWidget(QPushButton):
             self.setText("Enable H.A.L")
             self.setRed = True
     
-    def enable_or_disable(self):
-        if self.isEnabled():
-            self.setEnabled(False)
-        else:
-            self.setEnabled(True)
+    def enable_button(self):
+        self.setEnabled(True)
+        
+    def disable_button(self):
+        self.setEnabled(False)
+    
+    def deactivate_clicked(self):
+        self.deactivate.emit("Deactivate HAL")
 

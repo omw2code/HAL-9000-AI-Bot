@@ -26,9 +26,10 @@ class LoggerWidget(QTextEdit):
         ]
 
     def init_ui(self):
-        self.isReadOnly = True
+        self.setReadOnly(True)
         self.setFixedSize(QtCore.QSize(600, 60))
-        # self.resize(600,60)    
+
+
     def output_hal_response(self):
         print(f"output_user_input:::::  Dialog log is {self.logDialog}")
         print(f"output_user_input::::: Metrics log is {self.logMetrics}")
@@ -40,13 +41,14 @@ class LoggerWidget(QTextEdit):
                 self.setTextColor(QtGui.QColor(255, 0, 0))
                 self.insert_phrase_char(list(text))
                 self.verticalScrollBar().setValue(self.verticalScrollBar().maximum())
-        
+
+
     def output_user_input(self):
         if(self.logDialog):
             with open('speech_output.txt', 'r') as file:
                 line = file.readlines()
-                text = ''.join(['User: ', line[0]])
-                text.removeprefix("New User Input to answer:")
+                text = line[0].removeprefix('New User Input to answer: ')
+                text = ''.join(['User: ', text])
     
             with open("speech_output.txt", "w") as file:
                 file.truncate(0)
@@ -56,8 +58,6 @@ class LoggerWidget(QTextEdit):
             
 
     def start_logging(self):
-        print(f"start_logging:::::  Dialog log is {self.logDialog}")
-        print(f"start_logging::::: Metrics log is {self.logMetrics}")
         if(self.logMetrics):
             #log 3 different things: current OS status, current temperature status, current 
             self.log_timer = QtCore.QTimer()
@@ -86,11 +86,7 @@ class LoggerWidget(QTextEdit):
         if(self.logDialog):
             self.logDialog = False
             self.logMetrics = True
-            print(f"Dialog log is {self.logDialog}")
-            print(f"Metrics log is {self.logMetrics}")
         else:
             self.logDialog = True
             self.logMetrics = False
-            print(f"Dialog log is {self.logDialog}")
-            print(f"Metrics log is {self.logMetrics}")
             self.log_timer.stop()

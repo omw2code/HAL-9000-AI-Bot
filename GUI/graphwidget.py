@@ -5,11 +5,13 @@ from pydub import AudioSegment
 from pydub.playback import play
 import numpy as np
 import time
+from functools import partial
 
 class Graph(pyqtgraph.PlotWidget):
     def __init__(self):
         super().__init__()
         self.init_ui()
+        self._termination_audio = False
 
     def init_ui(self):
         # self.resize(800, 480)
@@ -18,13 +20,18 @@ class Graph(pyqtgraph.PlotWidget):
         self.timer = QtCore.QTimer()
         self.tet = QThread()
 
-    def config(self):
+    def config(self, audio = None):
         self.clear()
         self.traces = dict()
         self.audio_position = 0
         self.CHUNK = 1024
         self.x = np.arange(0, 2 * self.CHUNK, 2)
-        self.audio_segment = AudioSegment.from_mp3("GUI/output.mp3")
+
+        if self._termination_audio:
+            self.audio_segment = AudioSegment.from_mp3("GUI/Deactivate.mp3")
+        else:
+            self.audio_segment = AudioSegment.from_mp3("GUI/output.mp3")
+
         self.sample_rate = self.audio_segment.frame_rate
         self.num_channels = self.audio_segment.channels
         self.sample_width = self.audio_segment.sample_width
@@ -64,10 +71,16 @@ class Graph(pyqtgraph.PlotWidget):
         worker = AudioThread()
         worker.moveToThread(self.tet)
         worker.finished.connect(self.tet.quit)
-        self.tet.started.connect(worker.play_audio)
+
+        if self._termination_audio:
+            self.tet.started.connect(partial(worker.play_audio,"GUI/Deactivate.mp3"))
+        else:
+            self.tet.started.connect(partial(worker.play_audio,"GUI/output.mp3"))
+
+        # self.tet.started.connect(worker.play_audio)
         self.tet.start()
 
-        time.sleep(0.1)
+        time.sleep(0.2)
         #TODO: Check timers timeout
         self.timer.timeout.connect(self.update)
         self.timer.start(int(1000 * self.CHUNK / self.sample_rate))
@@ -79,6 +92,10 @@ class Graph(pyqtgraph.PlotWidget):
             self.tet.quit()
             self.tet.wait()
 
+    def run_deactivate(self):
+        self._termination_audio = True
+        self.animate()
+
 
 class AudioThread(QObject):
     finished = pyqtSignal()
@@ -86,7 +103,7 @@ class AudioThread(QObject):
     def __init__(self) -> None:
         super().__init__()
     
-    def play_audio(self):
-        self.audio_segment = AudioSegment.from_mp3("GUI/output.mp3")
+    def play_audio(self, audio):
+        self.audio_segment = AudioSegment.from_mp3(audio)
         play(self.audio_segment)
         self.finished.emit()

@@ -21,34 +21,38 @@ class WorkerThread(QThread):
         self.stt = stt
         self.log_conversation = True
         self.enable_HAL = True
+        self._is_alive = True
+        self._input = ""
 
     def run(self):
 
         #send the initial message upon startup to the user
-        self.tts.generate_text_to_speech(startup_message)
-        mp3_len = self.tts.get_audio_len()
-        self.output_hal_response(startup_message)
+        # self.tts.generate_text_to_speech(startup_message)
+        # mp3_len = self.tts.get_audio_len()
+        # self.output_hal_response(startup_message)
 
-        if(self.log_conversation):
-            self.log_hal_output.emit("log output")
+        # if(self.log_conversation):
+        #     self.log_hal_output.emit("log output")
     
-        self.visual_available.emit("animate")
-        time.sleep(mp3_len)
+        # self.visual_available.emit("animate")
+        # time.sleep(mp3_len)
+        time.sleep(3)
 
-
-        while True:
+        while self._is_alive:
+            time.sleep(1)
             if(self.enable_HAL):
-                # input = self.gpt.read_input()
-                input = None
+                self._input = self.gpt.read_input()
                 
-                if input:
+                if self._input:
                     if(self.log_conversation):
                         self.log_user_input.emit("log input")
-                    self.send_message(input)
+                    self.send_message(self._input)
                 else:
                     print("asking user")
                     self.stt.record_text()
-        
+
+
+
     def send_message(self, input):
         print("sending to hal")
         message = [{"role": "user", "content": input}]
@@ -62,6 +66,7 @@ class WorkerThread(QThread):
         time.sleep(mp3_len)
     
     def enable_or_disable_HAL(self):
+        #the initial state of HAL is enabled
         if(self.enable_HAL):
             self.enable_HAL = False
         else:
@@ -81,3 +86,7 @@ class WorkerThread(QThread):
         except Exception as e:
             print("An error has occurred: {0}".format(e))
         return
+
+    def killworker(self):
+        self._is_alive = False
+        

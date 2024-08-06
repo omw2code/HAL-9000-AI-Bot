@@ -19,18 +19,23 @@ def main() -> None:
     app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
     gui = av.GUI()
     worker = wt.WorkerThread(gpt,tts,stt)
-    thread = QThread()
-    worker.moveToThread(thread)
+
+
 
     worker.visual_available.connect(gui.plot_widget.animate)
     worker.log_hal_output.connect(gui.logger.output_hal_response)
     worker.log_user_input.connect(gui.logger.output_user_input)
     gui.halButton.clicked.connect(worker.enable_or_disable_HAL)
+    gui.deactivateButton.clicked.connect(worker.killworker)
+    gui.dialogButton.clicked.connect(worker.start_logging_convo)
 
+    thread = QThread()
+    worker.moveToThread(thread)
     thread.started.connect(worker.run)
     thread.start()
-    gui.dialogButton.clicked.connect(worker.start_logging_convo)
+    
     gui.show()
+    
     sys.exit(app.exec_())
     
 
