@@ -54,6 +54,7 @@ class GUI(QWidget):
         self.deactivateButton.clicked.connect(self.deactivateButton.disable_button)
         self.deactivateButton.clicked.connect(self.logger.clear)
         self.deactivateButton.clicked.connect(self.plot_widget.run_deactivate)
+        # self.deactivateButton.clicked.connect(self.logger.deactivation_log)
 
         
         #GUI layout set up
