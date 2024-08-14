@@ -20,6 +20,7 @@ def main() -> None:
     gui = mw.MainWindow()
     worker = wt.WorkerThread(gpt,tts,stt)
 
+    #connecting worker thread to GUI
     worker.visual_available.connect(gui.plot_widget.animate)
     worker.log_hal_output.connect(gui.logger.output_hal_response)
     worker.log_user_input.connect(gui.logger.output_user_input)
