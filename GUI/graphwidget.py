@@ -24,14 +24,15 @@ class Graph(pyqtgraph.PlotWidget):
         self.clear()
         self.traces = dict()
         self.audio_position = 0
-        self.CHUNK = 1024
-        self.x = np.arange(0, 2 * self.CHUNK, 2)
 
         if self._termination_audio:
             self.audio_segment = AudioSegment.from_mp3("GUI/Deactivation.mp3")
+            self.CHUNK = 1536
         else:
             self.audio_segment = AudioSegment.from_mp3("GUI/output.mp3")
-
+            self.CHUNK = 1024
+        
+        self.x = np.arange(0, 2 * self.CHUNK, 2)
         self.sample_rate = self.audio_segment.frame_rate
         self.num_channels = self.audio_segment.channels
         self.sample_width = self.audio_segment.sample_width
@@ -73,6 +74,7 @@ class Graph(pyqtgraph.PlotWidget):
         worker.finished.connect(self.tet.quit)
 
         if self._termination_audio:
+
             self.tet.started.connect(partial( worker.play_audio, "GUI/Deactivation.mp3"))
         else:
             self.tet.started.connect(partial( worker.play_audio, "GUI/output.mp3"))

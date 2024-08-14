@@ -27,16 +27,16 @@ class WorkerThread(QThread):
     def run(self):
 
         # send the initial message upon startup to the user
-        self.tts.generate_text_to_speech(startup_message)
-        mp3_len = self.tts.get_audio_len()
-        self.output_hal_response(startup_message)
+        # self.tts.generate_text_to_speech(startup_message)
+        # mp3_len = self.tts.get_audio_len()
+        # self.output_hal_response(startup_message)
 
-        if(self.log_conversation):
-            self.log_hal_output.emit("log output")
+        # if(self.log_conversation):
+        #     self.log_hal_output.emit("log output")
     
-        self.visual_available.emit("animate")
-        time.sleep(mp3_len)
-        # time.sleep(3)
+        # self.visual_available.emit("animate")
+        # time.sleep(mp3_len)
+        time.sleep(3)
 
         while self._is_alive:
             time.sleep(1)
@@ -88,5 +88,6 @@ class WorkerThread(QThread):
         return
 
     def killworker(self):
+
         self._is_alive = False
         

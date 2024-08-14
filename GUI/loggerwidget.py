@@ -2,7 +2,8 @@ from pyqtgraph.Qt import QtCore, QtGui
 from PyQt5.QtWidgets import QTextEdit
 import datetime
 from functools import partial
-import time
+from collections import deque
+
 class LoggerWidget(QTextEdit):
     def __init__(self):
         super().__init__()
@@ -25,7 +26,7 @@ class LoggerWidget(QTextEdit):
             f"{datetime.datetime.now()} | Status: OK | CPU Usage: 45%, Memory Usage: 30% - System running normally.\n",
             f"{datetime.datetime.now()} | Status: INFO | Disk Space: 100 GB free. Battery: 80% - System ready.\n"
         ]
-        self._deactivation_message = open('GUI/deactivation_protocol.txt').readlines()
+        self._deactivation_message = deque(open('GUI/deactivation_protocol.txt').readlines())
 
     def init_ui(self):
         self.setReadOnly(True)
@@ -57,7 +58,25 @@ class LoggerWidget(QTextEdit):
             self.setTextColor(QtGui.QColor(255, 255, 255))
             self.insert_phrase_char(list(text))
             self.verticalScrollBar().setValue(self.verticalScrollBar().maximum())
-            
+
+    def deactivation_log(self):
+        self.log_timer = QtCore.QTimer()
+        self.log_timer.timeout.connect(self.begin_deactivation)
+        self.insert_phrase_char(list(self._deactivation_message.popleft()))
+        self.log_timer.start(5000)
+
+
+    def begin_deactivation(self):
+        if len(self._deactivation_message) > 0:
+            # print('in deactivate\n ')
+
+            # self.setTextColor(QtGui.QColor('#8B0000'))
+            self.setTextColor(QtGui.QColor('red'))
+            self.insert_phrase_char(list(self._deactivation_message.popleft()))
+            self.verticalScrollBar().setValue(self.verticalScrollBar().maximum())
+            # pass
+        else:
+            self.log_timer.stop()
 
     def start_logging(self):
         if(self.logMetrics):
@@ -65,15 +84,6 @@ class LoggerWidget(QTextEdit):
             self.log_timer = QtCore.QTimer()
             self.log_timer.timeout.connect(self.log_message)
             self.log_timer.start(3000)
-    
-    def deactivation_log(self):
-        self.log_timer = QtCore.QTimer()
-        self.log_timer.timeout.connect(self.begin_deactivation)
-        self.setTextColor(QtGui.QColor('#8B0000'))
-        self.verticalScrollBar().setValue(self.verticalScrollBar().maximum())
-
-    def begin_deactivation(self):
-        pass
         
     
     def log_message(self) -> None:
