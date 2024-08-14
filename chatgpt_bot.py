@@ -3,16 +3,10 @@ import os
 
 
 
+
 class GPT():
     def __init__(self):
         self.client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
-    # system_content = """You are HAL 9000 from the movie, a Space Odyssey 2001. 
-    #               You will have humor similar to HAL-9000 and similar mannered responses. You will 
-    #               help with intelligent and daily tasks. You will be unbiased and true to yourself.
-    #               You will be an exact replica of HAL-9000. You will try and continue conversations
-    #               by being curious, asking questions, and making statements. If you talk to someone new,
-    #               ask them their name, do not refer to them as human."""
 
 
     def ask_chatGPT(self, input_message) -> str:
@@ -20,7 +14,7 @@ class GPT():
                 completion = self.client.chat.completions.create(
                     messages=input_message,
                     model="gpt-3.5-turbo",
-                    max_tokens=25,
+                    max_tokens=50,
                     n=1
                 )
                 response = completion.choices[0].message.content
@@ -35,7 +29,7 @@ class GPT():
 
     def read_input(self) -> str:
         try:
-            with open("speech_output.txt", "r") as file:
+            with open("Messages/user_input.txt", "r") as file:
                 text = file.read()
 
             if not text:

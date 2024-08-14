@@ -1,12 +1,10 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
-from pyqtgraph.Qt import QtCore
-from PyQt5.QtCore import Qt
 
 import GUI.loggerwidget as lw
 import GUI.buttons as but
 import GUI.graphwidget as gw
 
-class GUI(QWidget):
+class MainWindow(QWidget):
     def __init__(self):
         super().__init__()
         self.init_ui()

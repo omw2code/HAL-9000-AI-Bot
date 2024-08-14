@@ -26,10 +26,10 @@ class Graph(pyqtgraph.PlotWidget):
         self.audio_position = 0
 
         if self._termination_audio:
-            self.audio_segment = AudioSegment.from_mp3("GUI/Deactivation.mp3")
+            self.audio_segment = AudioSegment.from_mp3("Audio/Deactivation.mp3")
             self.CHUNK = 1536
         else:
-            self.audio_segment = AudioSegment.from_mp3("GUI/output.mp3")
+            self.audio_segment = AudioSegment.from_mp3("Audio/HAL_audio.mp3")
             self.CHUNK = 1024
         
         self.x = np.arange(0, 2 * self.CHUNK, 2)
@@ -58,7 +58,6 @@ class Graph(pyqtgraph.PlotWidget):
             self.draw("HAL", dataset_x=self.x, dataset_y=wf_data)
         else:
             if self.timer.isActive():
-                print("Stopping timer")
                 self.timer.stop()
 
     def animate(self):
@@ -75,9 +74,9 @@ class Graph(pyqtgraph.PlotWidget):
 
         if self._termination_audio:
 
-            self.tet.started.connect(partial( worker.play_audio, "GUI/Deactivation.mp3"))
+            self.tet.started.connect(partial( worker.play_audio, "Audio/Deactivation.mp3"))
         else:
-            self.tet.started.connect(partial( worker.play_audio, "GUI/output.mp3"))
+            self.tet.started.connect(partial( worker.play_audio, "Audio/HAL_audio.mp3"))
 
         # self.tet.started.connect(worker.play_audio)
         self.tet.start()

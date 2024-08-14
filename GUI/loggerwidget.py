@@ -26,7 +26,7 @@ class LoggerWidget(QTextEdit):
             f"{datetime.datetime.now()} | Status: OK | CPU Usage: 45%, Memory Usage: 30% - System running normally.\n",
             f"{datetime.datetime.now()} | Status: INFO | Disk Space: 100 GB free. Battery: 80% - System ready.\n"
         ]
-        self._deactivation_message = deque(open('GUI/deactivation_protocol.txt').readlines())
+        self._deactivation_message = deque(open('Messages/deactivation_protocol.txt').readlines())
 
     def init_ui(self):
         self.setReadOnly(True)
@@ -34,30 +34,25 @@ class LoggerWidget(QTextEdit):
 
 
     def output_hal_response(self):
-        print(f"output_user_input:::::  Dialog log is {self.logDialog}")
-        print(f"output_user_input::::: Metrics log is {self.logMetrics}")
         if(self.logDialog):
-            with open('GUI/hal_output.txt', 'r') as file:
+            with open('Messages/hal_output.txt', 'r') as file:
                 text = 'HAL: '
                 text += file.read()
                 text += '\n'
                 self.setTextColor(QtGui.QColor(255, 0, 0))
                 self.insert_phrase_char(list(text))
-                self.verticalScrollBar().setValue(self.verticalScrollBar().maximum())
 
 
     def output_user_input(self):
         if(self.logDialog):
-            with open('speech_output.txt', 'r') as file:
+            with open('Messages/user_input.txt', 'r') as file:
                 line = file.readlines()
-                text = line[0].removeprefix('New User Input to answer: ')
-                text = ''.join(['User: ', text])
+                text = ''.join(['User: ', line[0]])
     
-            with open("speech_output.txt", "w") as file:
+            with open("Messages/user_input.txt", "w") as file:
                 file.truncate(0)
             self.setTextColor(QtGui.QColor(255, 255, 255))
             self.insert_phrase_char(list(text))
-            self.verticalScrollBar().setValue(self.verticalScrollBar().maximum())
 
     def deactivation_log(self):
         self.log_timer = QtCore.QTimer()
@@ -68,13 +63,8 @@ class LoggerWidget(QTextEdit):
 
     def begin_deactivation(self):
         if len(self._deactivation_message) > 0:
-            # print('in deactivate\n ')
-
-            # self.setTextColor(QtGui.QColor('#8B0000'))
             self.setTextColor(QtGui.QColor('red'))
             self.insert_phrase_char(list(self._deactivation_message.popleft()))
-            self.verticalScrollBar().setValue(self.verticalScrollBar().maximum())
-            # pass
         else:
             self.log_timer.stop()
 
@@ -93,7 +83,6 @@ class LoggerWidget(QTextEdit):
         
         text = list(self.textList[self.color_counter])
         self.insert_phrase_char(text)
-        self.verticalScrollBar().setValue(self.verticalScrollBar().maximum())
 
     def insert_phrase_char(self, text):
         if len(text) > 0:
@@ -102,6 +91,7 @@ class LoggerWidget(QTextEdit):
             next_char = text.pop(0)
             cursor.insertText(next_char)
             QtCore.QTimer.singleShot(10, partial(self.insert_phrase_char, text))
+        self.verticalScrollBar().setValue(self.verticalScrollBar().maximum())
     
     def setLogStatus(self):
         if(self.logDialog):

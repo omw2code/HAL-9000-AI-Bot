@@ -1,4 +1,4 @@
-import GUI.audio_visualizer as av
+import GUI.MainWindow as mw
 import workerthread as wt
 
 import chatgpt_bot
@@ -17,10 +17,8 @@ def main() -> None:
 
     app = QApplication([])
     app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
-    gui = av.GUI()
+    gui = mw.MainWindow()
     worker = wt.WorkerThread(gpt,tts,stt)
-
-
 
     worker.visual_available.connect(gui.plot_widget.animate)
     worker.log_hal_output.connect(gui.logger.output_hal_response)

@@ -14,14 +14,14 @@ class TTS():
                 input=input
             )
             
-            response.stream_to_file("GUI/output.mp3")
+            response.stream_to_file("Audio/HAL_audio.mp3")
 
         except APIError as e:
             print("An error has occurred: {0}".format(e))
 
     def get_audio_len(self):
         try:
-            audio_file = AudioSegment.from_file("GUI/output.mp3")
+            audio_file = AudioSegment.from_file("Audio/HAL_audio.mp3")
             return audio_file.duration_seconds
         except FileNotFoundError as e:
             print("An error has occurred: {0}".format(e))
