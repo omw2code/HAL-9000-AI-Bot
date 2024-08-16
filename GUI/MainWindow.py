@@ -18,7 +18,7 @@ class MainWindow(QWidget):
         self.halButton = but.ButtonWidget('Disable HAL')
         self.dialogButton = but.ButtonWidget('Show Dialog')
         self.loggerButton = but.ButtonWidget('Show Logger')
-        self.deactivateButton = but.ButtonWidget('DEACTIVATE HAL')
+        self.deactivateButton = but.ButtonWidget('DEACTIVATE')
 
         #Button colors
         self.deactivateButton.setStyleSheet('background-color: #8B0000')
@@ -53,7 +53,7 @@ class MainWindow(QWidget):
         self.deactivateButton.clicked.connect(self.logger.clear)
         self.deactivateButton.clicked.connect(self.plot_widget.run_deactivate)
         self.deactivateButton.clicked.connect(self.logger.deactivation_log)
-
+        self.deactivateButton.clicked.connect(self.deactivateButton.start_flashing)
         
         #GUI layout set up
         self.vlayout = QVBoxLayout()

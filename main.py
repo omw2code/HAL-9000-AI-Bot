@@ -33,7 +33,7 @@ def main() -> None:
     thread.started.connect(worker.run)
     thread.start()
     
-    gui.show()
+    gui.showFullScreen()
     
     sys.exit(app.exec_())
     

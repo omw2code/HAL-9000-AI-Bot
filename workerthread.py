@@ -37,6 +37,7 @@ class WorkerThread(QThread):
         self._message = []
 
     def run(self):
+        time.sleep(15)
         # send the initial message upon startup to the user
         self.tts.generate_text_to_speech(startup_message)
         mp3_len = self.tts.get_audio_len()
@@ -47,7 +48,7 @@ class WorkerThread(QThread):
     
         self.visual_available.emit("animate")
         time.sleep(mp3_len)
-        time.sleep(3)
+        time.sleep(1)
         self._message.append({"role": "system", "content": system_content})
 
         while self._is_alive:

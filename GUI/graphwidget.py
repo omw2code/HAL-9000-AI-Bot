@@ -75,14 +75,19 @@ class Graph(pyqtgraph.PlotWidget):
         if self._termination_audio:
 
             self.tet.started.connect(partial( worker.play_audio, "Audio/Deactivation.mp3"))
+            self.tet.start()
+            time.sleep(1)
         else:
             self.tet.started.connect(partial( worker.play_audio, "Audio/HAL_audio.mp3"))
+            self.tet.start()
+            time.sleep(0.19)
 
         # self.tet.started.connect(worker.play_audio)
-        self.tet.start()
+                # time.sleep(0.2)
 
-        time.sleep(0.2)
-        #TODO: Check timers timeout
+
+
+        # #TODO: Check timers timeout
         self.timer.timeout.connect(self.update)
         self.timer.start(int(1000 * self.CHUNK / self.sample_rate))
 
@@ -105,6 +110,7 @@ class AudioThread(QObject):
         super().__init__()
     
     def play_audio(self, audio):
+
         self.audio_segment = AudioSegment.from_mp3(audio)
         play(self.audio_segment)
         self.finished.emit()
