@@ -58,3 +58,12 @@ class ButtonWidget(QPushButton):
             self.setFont(self.font)
             self.setRed = True
 
+    def change_deactivate_state(self):
+        if(self.setRed):
+            self.setEnabled(False)
+            self.setStyleSheet("Background-color: #8B0000; color: grey")
+            self.setRed = False
+        else:
+            self.setEnabled(True)
+            self.setStyleSheet("Background-color: red; color: white")
+            self.setRed = True

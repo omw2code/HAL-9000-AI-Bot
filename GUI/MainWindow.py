@@ -1,4 +1,5 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout
+from functools import partial
 
 import GUI.loggerwidget as lw
 import GUI.buttons as but
@@ -43,17 +44,19 @@ class MainWindow(QWidget):
 
         #if the hal button is clicked
         self.halButton.clicked.connect(self.halButton.halClicked)
-        self.halButton.clicked.connect(self.deactivateButton.enable_button)
+        self.halButton.clicked.connect(self.deactivateButton.change_deactivate_state)
+        
 
         #if DEACTIVATE HAL is clicked
-        self.deactivateButton.clicked.connect(self.loggerButton.disable_button)
-        self.deactivateButton.clicked.connect(self.dialogButton.disable_button)
-        self.deactivateButton.clicked.connect(self.halButton.disable_button)
-        self.deactivateButton.clicked.connect(self.deactivateButton.disable_button)
+        self.deactivateButton.clicked.connect(partial(self.loggerButton.setEnabled, False))
+        self.deactivateButton.clicked.connect(partial(self.dialogButton.setEnabled, False))
+        self.deactivateButton.clicked.connect(partial(self.halButton.setEnabled, False))
+        self.deactivateButton.clicked.connect(partial(self.deactivateButton.setEnabled, False))
         self.deactivateButton.clicked.connect(self.logger.clear)
         self.deactivateButton.clicked.connect(self.plot_widget.run_deactivate)
         self.deactivateButton.clicked.connect(self.logger.deactivation_log)
         self.deactivateButton.clicked.connect(self.deactivateButton.start_flashing)
+        # self.deactivateButton.clicked.connect(self.)
         
         #GUI layout set up
         self.vlayout = QVBoxLayout()
