@@ -1,4 +1,5 @@
 # HAL 9000 AI
+[![Demo Video](https://img.youtube.com/vi/3mp2JN1xlK4/0.jpg)](https://www.youtube.com/shorts/3mp2JN1xlK4)
 
 A Python-based AI inspired by HAL 9000, designed to interact with users through speech. This project was developed on a Raspberry Pi 4 running Ubuntu Jammy and utilizes Python 3.11.5. HAL 9000 brings voice-activated responses and advanced text-to-speech (TTS) functionality with a sleek, dark-themed interface powered by PyQt.
 
@@ -62,4 +63,4 @@ You may also need additional drivers for microphone and speaker compatibility on
 - Navigate to the **LICENSES** directory to understand how to use the code legally.
 
 
-[![Demo Video](https://img.youtube.com/vi/PkM0fvH8Xlw/0.jpg)](https://www.youtube.com/watch?v=PkM0fvH8Xlw)
+
