@@ -25,11 +25,11 @@ class WorkerThread(QThread):
     log_user_input = pyqtSignal(str)
     visual_available = pyqtSignal(str)
 
-    def __init__(self, gpt, tts, stt):
+    def __init__(self):
         super().__init__()
-        self.gpt = gpt
-        self.tts = tts
-        self.stt = stt
+        # self.gpt = gpt
+        # self.tts = tts
+        # self.stt = stt
         self.log_conversation = True
         self.enable_HAL = True
         self._is_alive = True
@@ -39,30 +39,31 @@ class WorkerThread(QThread):
     def run(self):
         time.sleep(3)
         # send the initial message upon startup to the user
-        self.tts.generate_text_to_speech(startup_message)
-        mp3_len = self.tts.get_audio_len()
-        self.output_hal_response(startup_message)
+        # self.tts.generate_text_to_speech(startup_message)
+        # mp3_len = self.tts.get_audio_len()
+        # self.output_hal_response(startup_message)
 
-        if(self.log_conversation):
-            self.log_hal_output.emit("log output")
+        # if(self.log_conversation):
+        #     self.log_hal_output.emit("log output")
     
-        self.visual_available.emit("animate")
-        time.sleep(mp3_len)
-        time.sleep(1)
-        self._message.append({"role": "system", "content": system_content})
+        # self.visual_available.emit("animate")
+        # time.sleep(mp3_len)
+        # time.sleep(1)
+        # self._message.append({"role": "system", "content": system_content})
 
         while self._is_alive:
-            time.sleep(1)
-            if(self.enable_HAL):
-                self._input = self.gpt.read_input()
+            continue
+            # time.sleep(1)
+            # if(self.enable_HAL):
+            #     self._input = self.gpt.read_input()
                 
-                if self._input:
-                    if(self.log_conversation):
-                        self.log_user_input.emit("log input")
-                    self.send_message(self._input)
-                else:
-                    print("asking user")
-                    self.stt.record_text()
+            #     if self._input:
+            #         if(self.log_conversation):
+            #             self.log_user_input.emit("log input")
+            #         self.send_message(self._input)
+            #     else:
+            #         print("asking user")
+            #         self.stt.record_text()
 
 
 

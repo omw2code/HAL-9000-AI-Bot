@@ -11,14 +11,14 @@ import sys
 import qdarkstyle
 
 def main() -> None:
-    gpt = chatgpt_bot.GPT()
-    tts = tts_bot.TTS()
-    stt = stt_bot.SST()
+    # gpt = chatgpt_bot.GPT()
+    # tts = tts_bot.TTS()
+    # stt = stt_bot.SST()
 
     app = QApplication([])
     app.setStyleSheet(qdarkstyle.load_stylesheet_pyqt5())
     gui = mw.MainWindow()
-    worker = wt.WorkerThread(gpt,tts,stt)
+    worker = wt.WorkerThread() # TODO: pass gpt and tts  and stt to this
 
     #connecting worker thread to GUI
     worker.visual_available.connect(gui.plot_widget.animate)

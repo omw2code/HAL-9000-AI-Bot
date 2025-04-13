@@ -27,7 +27,7 @@ class Graph(pyqtgraph.PlotWidget):
 
         if self._termination_audio:
             # self.audio_segment = AudioSegment.from_mp3("Audio/Deactivation.mp3")
-            self.audio_segment = AudioSegment.from_mp3("Audio/frutiger_aero.mp3")
+            self.audio_segment = AudioSegment.from_mp3("Audio/in_your_eyes.mp3")
             
             self.CHUNK = 1536
         else:
@@ -77,7 +77,7 @@ class Graph(pyqtgraph.PlotWidget):
         if self._termination_audio:
 
             # self.tet.started.connect(partial( worker.play_audio, "Audio/Deactivation.mp3"))
-            self.tet.started.connect(partial( worker.play_audio, "Audio/frutiger_aero.mp3"))
+            self.tet.started.connect(partial( worker.play_audio, "Audio/in_your_eyes.mp3"))
             
             self.tet.start()
             time.sleep(1)
